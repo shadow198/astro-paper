@@ -5,8 +5,13 @@ import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconArchive from "@/assets/icons/IconArchive.svg";
 import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
 import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
+import IconLanguage from "@/assets/icons/IconLanguage.svg"; // Placeholder, using text if icon missing
 import LinkButton from "./LinkButton.astro";
 import { SITE } from "@/config";
+import { getLangFromUrl, useTranslations, languages } from "@/utils/ui";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const { pathname } = Astro.url;
 
@@ -20,6 +25,16 @@ const isActive = (path: string) => {
 
   return currentPath === path || currentPathArray[0] === pathArray[0];
 };
+
+function translatePath(path: string) {
+    if (lang === "en") return path;
+    return `/${lang}${path}`;
+}
+
+const toggleLang = lang === "en" ? "zh" : "en";
+const togglePath = lang === "en" 
+    ? `/zh${currentPath}` 
+    : currentPath.replace(/^\/zh/, "") || "/";
 ---
 
 <a
@@ -43,7 +58,7 @@ const isActive = (path: string) => {
     ]}
   >
     <a
-      href="/"
+      href={translatePath("/")}
       class="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
     >
       {SITE.title}
@@ -72,53 +87,63 @@ const isActive = (path: string) => {
         ]}
       >
         <li class="col-span-2">
-          <a href="/posts" class:list={{ "active-nav": isActive("/posts") }}>
-            Posts
+          <a href={translatePath("/posts")} class:list={{ "active-nav": isActive("/posts") }}>
+            {t("nav.posts")}
           </a>
         </li>
         <li class="col-span-2">
-          <a href="/tags" class:list={{ "active-nav": isActive("/tags") }}>
-            Tags
+          <a href={translatePath("/tags")} class:list={{ "active-nav": isActive("/tags") }}>
+            {t("nav.tags")}
           </a>
         </li>
         <li class="col-span-2">
-          <a href="/about" class:list={{ "active-nav": isActive("/about") }}>
-            About
+          <a href={translatePath("/about")} class:list={{ "active-nav": isActive("/about") }}>
+            {t("nav.about")}
           </a>
         </li>
         {
           SITE.showArchives && (
             <li class="col-span-2">
               <LinkButton
-                href="/archives"
+                href={translatePath("/archives")}
                 class:list={[
                   "focus-outline flex justify-center p-3 sm:p-1",
                   {
                     "active-nav [&>svg]:stroke-accent": isActive("/archives"),
                   },
                 ]}
-                title="Archives"
+                title={t("nav.archives")}
                 aria-label="archives"
               >
                 <IconArchive class="hidden sm:inline-block" />
-                <span class="sm:sr-only">Archives</span>
+                <span class="sm:sr-only">{t("nav.archives")}</span>
               </LinkButton>
             </li>
           )
         }
         <li class="col-span-1 flex items-center justify-center">
           <LinkButton
-            href="/search"
+            href={translatePath("/search")}
             class:list={[
               "focus-outline flex p-3 sm:p-1",
               { "[&>svg]:stroke-accent": isActive("/search") },
             ]}
-            title="Search"
+            title={t("nav.search")}
             aria-label="search"
           >
             <IconSearch />
-            <span class="sr-only">Search</span>
+            <span class="sr-only">{t("nav.search")}</span>
           </LinkButton>
+        </li>
+        <li class="col-span-1 flex items-center justify-center">
+           <a
+            href={togglePath}
+            class="focus-outline p-3 sm:p-1 font-bold"
+            aria-label="Language Switcher"
+            title={lang === "en" ? "Switch to Chinese" : "Switch to English"}
+           >
+            {lang === "en" ? "中" : "En"}
+           </a>
         </li>
         {
           SITE.lightAndDarkMode && (

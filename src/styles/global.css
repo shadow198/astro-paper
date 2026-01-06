@@ -67,3 +67,26 @@ html[data-theme="dark"] {
 :target {
   scroll-margin-block: 1rem;
 }
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  /* Expand links for printed version */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #555;
+  }
+  
+  /* Hide interactive elements */
+  nav, footer, button, .scroll-smooth {
+    display: none !important;
+  }
+}

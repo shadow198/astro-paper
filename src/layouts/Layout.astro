@@ -45,12 +45,15 @@ const structuredData = {
     },
   ],
 };
+
+import { getLangFromUrl } from "@/utils/ui";
+const lang = getLangFromUrl(Astro.url);
 ---
 
 <!doctype html>
 <html
   dir={SITE.dir}
-  lang=`${SITE.lang ?? "en"}`
+  lang={lang}
   class={`${scrollSmooth && "scroll-smooth"}`}
 >
   <head>
