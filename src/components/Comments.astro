@@ -1,0 +1,72 @@
+---
+// Giscus 评论组件
+---
+
+<div id="giscus-container" class="giscus-wrapper mt-8"></div>
+
+<script is:inline data-astro-rerun>
+  function loadGiscus() {
+    const container = document.getElementById('giscus-container');
+    if (!container) return;
+
+    // 清空容器（处理页面切换时的情况）
+    container.innerHTML = '';
+
+    // 获取当前主题
+    const theme = localStorage.getItem("theme") === "dark" ? "dark" : "light";
+
+    // 创建 script 元素
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo', 'shadow198/astro-paper');
+    script.setAttribute('data-repo-id', 'R_kgDOQ0zzMg');
+    script.setAttribute('data-category', 'Announcements');
+    script.setAttribute('data-category-id', 'DIC_kwDOQ0zzMs4C02pf');
+    script.setAttribute('data-mapping', 'pathname');
+    script.setAttribute('data-strict', '0');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-emit-metadata', '0');
+    script.setAttribute('data-input-position', 'bottom');
+    script.setAttribute('data-theme', theme);
+    script.setAttribute('data-lang', 'zh-CN');
+    script.setAttribute('crossorigin', 'anonymous');
+    script.async = true;
+
+    container.appendChild(script);
+  }
+
+  // 页面加载时执行
+  loadGiscus();
+
+  // 监听主题变化
+  document.addEventListener('astro:after-swap', () => {
+    loadGiscus();
+  });
+
+  // 监听主题切换事件
+  if (typeof window !== 'undefined') {
+    const sendThemeMessage = () => {
+      const theme = localStorage.getItem("theme") === "dark" ? "dark" : "light";
+      const iframe = document.querySelector('iframe.giscus-frame');
+      if (iframe) {
+        iframe.contentWindow.postMessage(
+          { giscus: { setConfig: { theme } } },
+          'https://giscus.app'
+        );
+      }
+    };
+
+    // 监听主题按钮点击
+    document.addEventListener('click', (e) => {
+      if (e.target.id === 'theme-btn' || e.target.closest('#theme-btn')) {
+        setTimeout(sendThemeMessage, 100);
+      }
+    });
+  }
+</script>
+
+<style>
+  .giscus-wrapper {
+    width: 100%;
+  }
+</style>
